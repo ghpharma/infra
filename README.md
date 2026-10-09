@@ -1,8 +1,8 @@
-# zen-infra — Implementation Guide
+# gh-infra — Implementation Guide
 
 ![Infra Setup](docs/architecture.jpg)
 
-This guide walks you through setting up the zen-pharma infrastructure on your own AWS account from scratch using this repository. Follow each section in order.
+This guide walks you through setting up the gh-pharma infrastructure on your own AWS account from scratch using this repository. Follow each section in order.
 
 ---
 
@@ -28,7 +28,7 @@ This guide walks you through setting up the zen-pharma infrastructure on your ow
 
 ## 1. Architecture Overview
 
-This repository provisions a complete Kubernetes-based platform on AWS for the zen-pharma
+This repository provisions a complete Kubernetes-based platform on AWS for the gh-pharma
 application. All infrastructure is defined as code in Terraform and deployed automatically
 via GitHub Actions — no manual AWS console clicks required after initial setup.
 
@@ -40,7 +40,7 @@ via GitHub Actions — no manual AWS console clicks required after initial setup
 AWS Account (us-east-1)
 │
 ├── S3 Bucket  (created manually — state backend for Terraform)
-│   └── zen-pharma-terraform-state-<your-username>
+│   └── gh-pharma-terraform-state-<your-username>
 │       ├── envs/dev/terraform.tfstate
 │       ├── envs/qa/terraform.tfstate
 │       └── envs/prod/terraform.tfstate
@@ -88,7 +88,7 @@ AWS Account (us-east-1)
 │   ├── EKS Node Group Role       (allows worker nodes to pull from ECR, join cluster)
 │   │
 │   ├── GitHub Actions OIDC Role  (pharma-dev-gitlab-runner-role)
-│   │   ├── Trust policy : repo zen-pharma-frontend and zen-pharma-backend only
+│   │   ├── Trust policy : repo gh-pharma-frontend and gh-pharma-backend only
 │   │   └── Permissions  : ECR push/pull, EKS describe
 │   │   └── How it works : GitHub OIDC token -> AWS STS -> short-lived credentials
 │   │                      No AWS_ACCESS_KEY_ID stored in GitHub
@@ -110,7 +110,7 @@ AWS Account (us-east-1)
 ### Terraform Module Structure
 
 ```
-zen-infra/
+gh-infra/
 ├── envs/
 │   ├── dev/    <-- calls all modules with dev-specific values
 │   ├── qa/     <-- same modules, different sizing
@@ -177,13 +177,13 @@ AWS Network Load Balancer  (created by NGINX Ingress Controller Helm chart)
 ### GitHub Actions CI/CD Flow for Infrastructure
 
 ```
-Developer creates feature branch in zen-infra
+Developer creates feature branch in gh-infra
     |
     v
 git push origin feature/my-change
     |
     v
-Open Pull Request  -->  zen-infra GitHub Actions runs automatically:
+Open Pull Request  -->  gh-infra GitHub Actions runs automatically:
     |
     |   [Terraform Plan job]
     |   1. Checkout code
@@ -264,14 +264,14 @@ git --version
 
 - An AWS account with administrator access (or sufficient permissions — see Step 1)
 - A GitHub account
-- The zen-infra repository forked to your GitHub account
+- The gh-infra repository forked to your GitHub account
 
 ---
 
 ## 3. Repository Structure
 
 ```
-zen-infra/
+gh-infra/
 ├── .github/
 │   ├── dependabot.yml                    # Automated dependency update config
 │   └── workflows/
@@ -349,17 +349,17 @@ Replace `YOUR-GITHUB-USERNAME` with your actual GitHub username to make the buck
 ```bash
 # Create the bucket
 aws s3api create-bucket \
-  --bucket zen-pharma-terraform-state-YOUR-GITHUB-USERNAME \
+  --bucket gh-pharma-terraform-state-YOUR-GITHUB-USERNAME \
   --region us-east-1
 
 # Enable versioning (allows state rollback)
 aws s3api put-bucket-versioning \
-  --bucket zen-pharma-terraform-state-YOUR-GITHUB-USERNAME \
+  --bucket gh-pharma-terraform-state-YOUR-GITHUB-USERNAME \
   --versioning-configuration Status=Enabled
 
 # Enable encryption
 aws s3api put-bucket-encryption \
-  --bucket zen-pharma-terraform-state-YOUR-GITHUB-USERNAME \
+  --bucket gh-pharma-terraform-state-YOUR-GITHUB-USERNAME \
   --server-side-encryption-configuration '{
     "Rules": [{
       "ApplyServerSideEncryptionByDefault": {
@@ -370,7 +370,7 @@ aws s3api put-bucket-encryption \
 
 # Block all public access
 aws s3api put-public-access-block \
-  --bucket zen-pharma-terraform-state-YOUR-GITHUB-USERNAME \
+  --bucket gh-pharma-terraform-state-YOUR-GITHUB-USERNAME \
   --public-access-block-configuration \
     "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
 ```
@@ -378,7 +378,7 @@ aws s3api put-public-access-block \
 ### 5.2 Verify the Bucket
 
 ```bash
-aws s3 ls s3://zen-pharma-terraform-state-YOUR-GITHUB-USERNAME
+aws s3 ls s3://gh-pharma-terraform-state-YOUR-GITHUB-USERNAME
 # Should return empty (no error)
 ```
 
@@ -388,14 +388,14 @@ aws s3 ls s3://zen-pharma-terraform-state-YOUR-GITHUB-USERNAME
 
 ### 6.1 Fork the Repository
 
-1. Go to `github.com/your-github-username/zen-infra`
+1. Go to `github.com/your-github-username/gh-infra`
 2. Click **Fork** (top right)
 3. Select your account as the destination
 4. Clone your fork locally:
 
 ```bash
-git clone https://github.com/YOUR-GITHUB-USERNAME/zen-infra.git
-cd zen-infra
+git clone https://github.com/YOUR-GITHUB-USERNAME/gh-infra.git
+cd gh-infra
 ```
 
 ---
@@ -412,7 +412,7 @@ Update the bucket name in all three environment backend files:
 ```hcl
 terraform {
   backend "s3" {
-    bucket       = "zen-pharma-terraform-state-YOUR-GITHUB-USERNAME"
+    bucket       = "gh-pharma-terraform-state-YOUR-GITHUB-USERNAME"
     key          = "envs/dev/terraform.tfstate"
     region       = "us-east-1"
     encrypt      = true
@@ -687,7 +687,7 @@ All 5 repositories have:
 
 ### 12.5 GitHub Actions OIDC
 
-The IAM module creates a GitHub Actions OIDC role that allows CI/CD pipelines in `zen-pharma-frontend` and `zen-pharma-backend` to push images to ECR **without storing AWS credentials in GitHub Secrets**.
+The IAM module creates a GitHub Actions OIDC role that allows CI/CD pipelines in `gh-pharma-frontend` and `gh-pharma-backend` to push images to ECR **without storing AWS credentials in GitHub Secrets**.
 
 How it works:
 1. GitHub mints a short-lived OIDC token per workflow run
@@ -696,7 +696,7 @@ How it works:
 4. CI uses these credentials to push images to ECR
 
 The role is restricted to:
-- Only `YOUR-GITHUB-USERNAME/zen-pharma-frontend` and `YOUR-GITHUB-USERNAME/zen-pharma-backend` repos
+- Only `YOUR-GITHUB-USERNAME/gh-pharma-frontend` and `YOUR-GITHUB-USERNAME/gh-pharma-backend` repos
 - Only `main` and `develop` branches
 
 ---
@@ -820,11 +820,11 @@ The S3 state bucket is **not** deleted by Terraform destroy — it is managed se
 
 ```bash
 # Empty the bucket first
-aws s3 rm s3://zen-pharma-terraform-state-YOUR-GITHUB-USERNAME --recursive
+aws s3 rm s3://gh-pharma-terraform-state-YOUR-GITHUB-USERNAME --recursive
 
 # Delete the bucket
 aws s3api delete-bucket \
-  --bucket zen-pharma-terraform-state-YOUR-GITHUB-USERNAME \
+  --bucket gh-pharma-terraform-state-YOUR-GITHUB-USERNAME \
   --region us-east-1
 ```
 
@@ -937,7 +937,7 @@ Only the IAM entity that created the cluster (the CI/CD role or your local user)
 
 After completing this lab you have built and deployed real infrastructure — not watched a demo. Dedicated interview preparation documents are available in the `docs/` folder:
 
-- [Terraform Interview Questions](docs/terraform-interview-questions.md) — 40 questions covering core concepts, state management, modules, CI/CD pipeline, and real-world scenarios with zen-infra references
+- [Terraform Interview Questions](docs/terraform-interview-questions.md) — 40 questions covering core concepts, state management, modules, CI/CD pipeline, and real-world scenarios with gh-infra references
 - GitHub Actions Interview Questions — coming soon
 
 ---
