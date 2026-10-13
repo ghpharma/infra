@@ -53,7 +53,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup Terraform ${{ env.TF_VERSION }}
-        uses: hashicorp/setup-terraform@v5
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -99,7 +99,7 @@ jobs:
 
       - name: Upload plan file
         if: steps.plan.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tfplan
           path: envs/dev/tfplan
@@ -122,7 +122,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup Terraform ${{ env.TF_VERSION }}
-        uses: hashicorp/setup-terraform@v5
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -137,7 +137,7 @@ jobs:
         run: terraform init
 
       - name: Download plan file
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: tfplan
           path: envs/dev
@@ -171,7 +171,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup Terraform ${{ env.TF_VERSION }}
-        uses: hashicorp/setup-terraform@v5
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
