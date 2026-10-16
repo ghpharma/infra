@@ -127,7 +127,7 @@ if subprocess.run(["which", "kubectl"], capture_output=True).returncode != 0:
 # ---------------------------------------------------------------------------
 print()
 print("============================================")
-print("  Zen Pharma -- ArgoCD Bootstrap")
+print("  gh Pharma -- ArgoCD Bootstrap")
 print("============================================")
 print()
 print("  This script registers your gitops repo in ArgoCD,")
@@ -144,14 +144,14 @@ ENV             = prompt_choice("ENV", "Target environment (choose the namespace
                                 ["dev", "qa", "prod"])
 GITOPS_REPO_URL = prompt("GITOPS_REPO_URL", "GitOps repository HTTPS URL",
                           "https://github.com/<your-org>/gitops.git",
-                          "https://github.com/zenpharma/gitops.git")
+                          "https://github.com/ghpharma/gitops.git")
 
 print(f"\n{CYAN}  NOTE: Enter your personal GitHub username, not the organization name.")
 print(f"        GitHub authenticates users, not organizations. Your PAT grants")
 print(f"        access to the org's repos because you are a member.{NC}\n")
 
 GITHUB_USERNAME = prompt("GITHUB_USERNAME", "Your personal GitHub username",
-                          "<your-github-username>", "ravdsun")
+                          "<your-github-username>", "bhupathi4245")
 GITOPS_TOKEN    = prompt_secret("GITOPS_TOKEN",
                                 "GitHub Personal Access Token with read access to gitops",
                                 "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
@@ -251,7 +251,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  description: Zen Pharma Platform
+  description: gh Pharma Platform
   sourceRepos:
     - "{GITOPS_REPO_URL}"
   destinations:

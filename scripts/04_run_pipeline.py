@@ -6,7 +6,7 @@
 # Each pipeline builds a Docker image, pushes it to ECR, and commits the new
 # image tag back to the gitops repo so ArgoCD can pick it up.
 #
-# Requires: gh CLI (https://cli.github.com/) authenticated via 'gh auth login'
+# Requires: GH CLI (https://cli.github.com/) authenticated via 'gh auth login'
 # Run from the root of the dpp-assignment3 directory.
 # =============================================================================
 
@@ -64,7 +64,7 @@ def prompt(var_name, label, example, default=""):
 # Service catalogue is built dynamically after collecting user inputs below.
 
 # ---------------------------------------------------------------------------
-# Verify gh CLI is installed and authenticated
+# Verify GH CLI is installed and authenticated
 # ---------------------------------------------------------------------------
 print()
 print("Checking required tools...")
@@ -80,7 +80,7 @@ log("gh CLI found and authenticated.")
 # ---------------------------------------------------------------------------
 print()
 print("============================================")
-print("  Zen Pharma -- CI Pipeline Trigger")
+print("  gh Pharma -- CI Pipeline Trigger")
 print("============================================")
 print()
 print("  This script triggers GitHub Actions CI pipelines for selected services.")
@@ -88,7 +88,7 @@ print("  Each pipeline: builds → scans → pushes image to ECR → updates git
 print()
 
 GITHUB_ORG     = prompt("GITHUB_ORG",        "GitHub username or org that owns the repos",
-                        "<your-org>", "zenpharma")
+                        "<your-org>", "ghpharma")
 FRONTEND_REPO  = prompt("FRONTEND_REPO",    "GitHub repo name for frontend",
                         "frontend", "frontend")
 BACKEND_REPO   = prompt("BACKEND_REPO",     "GitHub repo name for backend",
