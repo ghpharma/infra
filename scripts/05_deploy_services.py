@@ -123,7 +123,7 @@ log("kubectl found.")
 # ---------------------------------------------------------------------------
 print()
 print("============================================")
-print("  Zen Pharma -- Deploy Services")
+print("  Gh Pharma -- Deploy Services")
 print("============================================")
 print()
 print("  This script applies ArgoCD Application manifests so ArgoCD starts")
@@ -141,7 +141,7 @@ print(f"\n{CYAN}  NOTE: Enter your personal GitHub username, not the organizatio
 print(f"        This is used to replace placeholders in ArgoCD Application manifests.{NC}\n")
 
 GITHUB_USERNAME = prompt("GITHUB_USERNAME", "Your personal GitHub username",
-                         "<your-github-username>", "ravdsun")
+                         "<your-github-username>", "bhupathi4245")
 
 default_gitops = os.path.join(DEFAULT_PROJECT_ROOT, "gitops")
 GITOPS_PATH     = prompt("GITOPS_PATH", "Local path to your gitops repo",
